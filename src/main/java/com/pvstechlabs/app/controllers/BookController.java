@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pvstechlabs.app.data.entities.Book;
 import com.pvstechlabs.app.data.services.BookService;
+import com.pvstechlabs.app.exceptions.ResourceNotFoundException;
+import com.pvstechlabs.app.payload.APIResponse;
 
 @CrossOrigin
 @RestController
@@ -24,9 +28,11 @@ public class BookController {
 	private BookService bookService;
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public String addBook(@RequestBody Book book) {
+	public ResponseEntity<?> addBook(@RequestBody Book book) {
 		System.out.println(book);
-		return bookService.save(book);
+		Book result = bookService.save(book);
+		return new ResponseEntity(new APIResponse(true, "Successfully created book '" + result.getTitle() + "'"),
+				HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/getAll", method = RequestMethod.GET)
@@ -40,15 +46,17 @@ public class BookController {
 		if (book.isPresent())
 			return book.get();
 		else {
-			return null;
+			throw new ResourceNotFoundException("Could not found the book.");
 		}
 	}
-	
+
 	@RequestMapping(value = "/delete/{bookId}", method = RequestMethod.DELETE)
 	public void deleteBook(@PathVariable Long bookId) {
 		Optional<Book> book = bookService.findOne(bookId);
 		if (book.isPresent())
 			bookService.delete(bookId);
+		else
+			throw new ResourceNotFoundException("Selected book Could not be found.");
 	}
 
 }
