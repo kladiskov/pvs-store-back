@@ -15,9 +15,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.pvstechlabs.app.security.ApplicationUserDetailsService;
 import com.pvstechlabs.app.security.SecurityTokenProvider;
@@ -59,16 +56,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		builder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
 	}
 
-	@Bean
-	CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration config = new CorsConfiguration();
-		config.applyPermitDefaultValues();
-		config.setAllowCredentials(true);
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", config);
-		return source;
-	}
-
 	protected void configure(HttpSecurity http) throws Exception {
 		http.cors().and().csrf().disable().exceptionHandling().authenticationEntryPoint(entryPoint).and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
@@ -76,6 +63,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 						"/**/*.css", "/**/*.js")
 				.permitAll().antMatchers("/pvs-store/api/user/**").permitAll()
 				.antMatchers(HttpMethod.GET, "/pvs-store/api/**").permitAll().anyRequest().authenticated();
+		// .antMatchers(HttpMethod.GET, "/pvs-store/api/**").permitAll()
+		// .antMatchers("/pvs-store/api/books/add",
+		// "/pvs-store/api/books/delete").hasRole("ADMIN")
 
 		http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 

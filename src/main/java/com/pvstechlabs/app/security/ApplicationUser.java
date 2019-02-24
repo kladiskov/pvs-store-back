@@ -19,11 +19,16 @@ public class ApplicationUser implements UserDetails {
 
 	private String username;
 
-	@JsonIgnore
 	private String email;
 
 	@JsonIgnore
 	private String password;
+
+	@Override
+	public String toString() {
+		return "ApplicationUser [id=" + id + ", username=" + username + ", email=" + email + ", password=" + password
+				+ ", authorities=" + authorities + "]";
+	}
 
 	private Collection<? extends GrantedAuthority> authorities;
 

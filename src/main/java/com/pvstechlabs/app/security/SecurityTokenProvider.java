@@ -31,14 +31,22 @@ public class SecurityTokenProvider {
 		ApplicationUser userDetails = (ApplicationUser) authentication.getPrincipal();
 		Date now = new Date();
 		Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
-
-		return Jwts.builder().setSubject(Long.toString(userDetails.getUserId())).setIssuedAt(new Date())
-				.setExpiration(expiryDate).signWith(SignatureAlgorithm.HS512, jwtSecret).compact();
+		boolean isAdmin = userDetails.getAuthorities().stream()
+				.anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
+		String token = Jwts.builder().setSubject(userDetails.getUsername()).claim("name", userDetails.getUsername())
+				.claim("isAdmin", String.valueOf(isAdmin)).setIssuedAt(new Date()).setExpiration(expiryDate)
+				.signWith(SignatureAlgorithm.HS512, jwtSecret).compact();
+		return token;
 	}
 
 	public Long getUserIdFromJwt(String token) {
 		Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
 		return Long.parseLong(claims.getSubject());
+	}
+
+	public String getUserNameFromJwt(String token) {
+		Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
+		return claims.getSubject();
 	}
 
 	public boolean validateToken(String authToken) {

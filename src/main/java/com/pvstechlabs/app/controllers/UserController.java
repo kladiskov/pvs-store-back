@@ -37,7 +37,7 @@ import com.pvstechlabs.app.security.SecurityTokenProvider;
 @RequestMapping(value = "/pvs-store/api/user")
 public class UserController {
 
-	private static final String USER_ROLE = "USER_ROLE";
+	private static final String USER_ROLE = "ROLE_USER";
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -53,6 +53,7 @@ public class UserController {
 
 	@PostMapping(value = "/login")
 	public ResponseEntity<?> authenticate(@Valid @RequestBody Login login) {
+		System.out.println("recevied login: " + login);
 		Authentication authentication = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);

@@ -34,15 +34,15 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 			String jwt = getJwtFromRequest(request);
 			System.out.println("inside doFilterInternal: " + jwt);
 			if (StringUtils.hasText(jwt) && provider.validateToken(jwt)) {
-				Long userId = provider.getUserIdFromJwt(jwt);
+				String userName = provider.getUserNameFromJwt(jwt);
 
-				UserDetails userDetails = service.loadUserById(userId);
+				UserDetails userDetails = service.loadUserByUsername(userName);
 				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
 						userDetails, null, userDetails.getAuthorities());
 				authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
 				SecurityContextHolder.getContext().setAuthentication(authentication);
-				//response.setHeader("access-control-expose-headers", "x-auth-token");
+				// response.setHeader("access-control-expose-headers", "x-auth-token");
 			}
 		} catch (Exception ex) {
 			log.error("Error setting authentication filter: " + ex.getMessage(), ex);
@@ -52,8 +52,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
 	private String getJwtFromRequest(HttpServletRequest request) {
 		String bearerToken = request.getHeader("Authorization");
+		String token = request.getHeader("x-auth-token");
 		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
 			return bearerToken.substring(7, bearerToken.length());
+		} else if (StringUtils.hasText(token)) {
+			return token;
 		}
 		return null;
 	}
