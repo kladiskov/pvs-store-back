@@ -47,6 +47,15 @@ public class Book {
 
 	@Column(name = "active")
 	private boolean active;
+	
+	@Column(name = "isbn")
+	private String isbn;
+	
+	@Column(name = "description")
+	private String description;
+	
+	@Column(name = "pages")
+	private int pages;
 
 	public Long getBookId() {
 		return bookId;
@@ -54,14 +63,6 @@ public class Book {
 
 	public void setBookId(Long bookId) {
 		this.bookId = bookId;
-	}
-
-	public Genre getgenre() {
-		return genre;
-	}
-
-	public void setGenre(Genre genre) {
-		this.genre = genre;
 	}
 
 	public String getTitle() {
@@ -120,10 +121,42 @@ public class Book {
 		this.active = active;
 	}
 
+	public Genre getGenre() {
+		return genre;
+	}
+
+	public void setGenre(Genre genre) {
+		this.genre = genre;
+	}
+
+	public String getIsbn() {
+		return isbn;
+	}
+
+	public void setIsbn(String isbn) {
+		this.isbn = isbn;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public int getPages() {
+		return pages;
+	}
+
+	public void setPages(int pages) {
+		this.pages = pages;
+	}
+
 	@Override
 	public String toString() {
 		return "Book [bookId=" + bookId + ", genre=" + genre + ", title=" + title + ", author=" + author + ", rating="
 				+ rating + ", publishDate=" + publishDate + ", stock=" + stock + ", price=" + price + ", active="
-				+ active + "]";
+				+ active + ", isbn=" + isbn + ", description=" + description + ", pages=" + pages + "]";
 	}
 }
